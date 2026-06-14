@@ -39,36 +39,36 @@
     <div id="container">Daten werden geladen...</div>
 
     <script>
-        const dateien = ['android.json', 'ios.json', 'windows.json', 'macosx.json', 'linux.json'];
+    async function testLaden() {
+    const container = document.getElementById('container');
+    container.innerHTML = ""; 
 
-        async function testLaden() {
-            const container = document.getElementById('container');
-            container.innerHTML = ""; 
+    for (const datei of dateien) {
+        const card = document.createElement('div');
+        card.className = 'download-card';
+        card.innerHTML = `<div class="file-name">Lade...</div>`;
+        container.appendChild(card);
 
-            for (const datei of dateien) {
-                const card = document.createElement('div');
-                card.className = 'download-card';
-                card.innerHTML = `<div class="file-name">${datei}</div><div>Lädt...</div>`;
-                container.appendChild(card);
+        try {
+            const response = await fetch(datei);
+            if (!response.ok) throw new Error("Nicht gefunden");
+            const data = await response.json();
 
-                try {
-                    const response = await fetch(datei);
-                    if (!response.ok) throw new Error("Datei nicht gefunden");
-                    const data = await response.json();
-
-                    // Inhalt der Karte aktualisieren
-                    card.innerHTML = `
-                        <div class="file-name">${datei.toUpperCase()}</div>
-                        <p style="font-size: 0.8em; color: #666;">Größe: ${JSON.stringify(data).length} Bytes</p>
-                        <a href="#" class="btn" onclick="alert('Download gestartet für ${datei}')">Download</a>
-                    `;
-                } catch (e) {
-                    card.innerHTML = `<div class="file-name">${datei}</div><p class="error">Fehler beim Laden</p>`;
-                }
-            }
+            // Hier werden die Strings direkt aus dem JSON geholt
+            card.innerHTML = `
+                <div class="file-name">${data.Plattform || "Unbekannt"}</div>
+                <div style="text-align: left; font-size: 0.9em; margin: 10px 0;">
+                    <p><strong>Channel:</strong> ${data.Channel}</p>
+                    <p><strong>Version:</strong> ${data.Version}</p>
+                    <p><strong>Datum:</strong> ${data.Datum}</p>
+                </div>
+                <a href="${data.URL}" class="btn" download>Download</a>
+            `;
+        } catch (e) {
+            card.innerHTML = `<div class="file-name">Fehler</div><p class="error">Konnte ${datei} nicht laden</p>`;
         }
-
-        testLaden();
+    }
+}
     </script>
 </body>
 </html>
