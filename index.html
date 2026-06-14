@@ -2,10 +2,21 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <title>Downloads</title>
+
     <style>
-        body { font-family: sans-serif; background-color: #f4f7f6; padding: 20px; }
-        #container { display: flex; flex-wrap: wrap; gap: 20px; }
-        
+        body {
+            font-family: sans-serif;
+            background-color: #f4f7f6;
+            padding: 20px;
+        }
+
+        #container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
         .download-card {
             background: white;
             border: 1px solid #ddd;
@@ -13,11 +24,14 @@
             padding: 15px;
             width: 250px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            text-align: center;
         }
-        
-        .file-name { font-weight: bold; margin-bottom: 10px; color: #333; }
-        
+
+        .file-name {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
         .btn {
             display: inline-block;
             margin-top: 10px;
@@ -26,49 +40,84 @@
             color: white;
             text-decoration: none;
             border-radius: 4px;
-            cursor: pointer;
         }
-        
-        .btn:hover { background-color: #0056b3; }
-        .error { color: red; font-size: 0.9em; }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .error {
+            color: red;
+            font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
 
-    <h1>Downloads</h1>
-    <div id="container">Daten werden geladen...</div>
+<h1>Downloads</h1>
+<div id="container">Daten werden geladen...</div>
 
-    <script>
-    async function testLaden() {
-    const container = document.getElementById('container');
-    container.innerHTML = ""; 
+<script>
+
+// JSON-Dateien definieren
+const dateien = [
+    "android.json",
+    "windows.json",
+    "linux.json"
+];
+
+async function testLaden() {
+    const container = document.getElementById("container");
+    container.innerHTML = "";
 
     for (const datei of dateien) {
-        const card = document.createElement('div');
-        card.className = 'download-card';
-        card.innerHTML = `<div class="file-name">Lade...</div>`;
+        const card = document.createElement("div");
+        card.className = "download-card";
+        card.innerHTML = "<div class='file-name'>Lade...</div>";
         container.appendChild(card);
 
         try {
             const response = await fetch(datei);
-            if (!response.ok) throw new Error("Nicht gefunden");
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
             const data = await response.json();
 
-            // Hier werden die Strings direkt aus dem JSON geholt
             card.innerHTML = `
-                <div class="file-name">${data.Plattform || "Unbekannt"}</div>
-                <div style="text-align: left; font-size: 0.9em; margin: 10px 0;">
-                    <p><strong>Channel:</strong> ${data.Channel}</p>
-                    <p><strong>Version:</strong> ${data.Version}</p>
-                    <p><strong>Datum:</strong> ${data.Datum}</p>
+                <div class="file-name">${data.Plattform ?? "Unbekannt"}</div>
+
+                <div style="font-size:0.9em; text-align:left;">
+                    <p><strong>Channel:</strong> ${data.Channel ?? "-"}</p>
+                    <p><strong>Version:</strong> ${data.Version ?? "-"}</p>
+                    <p><strong>Datum:</strong> ${data.Datum ?? "-"}</p>
                 </div>
-                <a href="${data.URL}" class="btn" download>Download</a>
+
+                <a href="${data.URL ?? '#'}"
+                   class="btn"
+                   target="_blank">
+                   Download
+                </a>
             `;
-        } catch (e) {
-            card.innerHTML = `<div class="file-name">Fehler</div><p class="error">Konnte ${datei} nicht laden</p>`;
+        }
+        catch (error) {
+            card.innerHTML = `
+                <div class="file-name">Fehler</div>
+                <p class="error">
+                    ${datei} konnte nicht geladen werden.
+                </p>
+            `;
+
+            console.error(error);
         }
     }
 }
-    </script>
+
+// Nach dem Laden der Seite ausführen
+window.addEventListener("DOMContentLoaded", testLaden);
+
+</script>
+
 </body>
 </html>
