@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <div id="test">Daten werden geladen...</div>
+
+    <script>
+        const dateien = ['./android.json', 'ios.json', 'web.json'];
+
+        async function testLaden() {
+            const output = document.getElementById('test');
+            output.innerHTML = ""; // Container leeren
+
+            for (const datei of dateien) {
+                try {
+                    const response = await fetch(datei);
+                    const data = await response.json();
+                    
+                    // Zeigt den Inhalt der Datei einfach als Text im Browser an
+                    output.innerHTML += `<pre>${datei}: ${JSON.stringify(data, null, 2)}</pre>`;
+                } catch (e) {
+                    output.innerHTML += `<p>Fehler bei ${datei}: ${e.message}</p>`;
+                }
+            }
+        }
+
+        testLaden();
+    </script>
+</body>
+</html>
