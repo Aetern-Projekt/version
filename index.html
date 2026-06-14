@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
+
 <body>
     <div id="test">Daten werden geladen...</div>
 
     <script>
-        const dateien = ['./android.json', 'ios.json', 'web.json'];
+        const dateien = ['android.json', 'ios.json', 'windows.json','macosx.json','linux.json'];
 
         async function testLaden() {
             const output = document.getElementById('test');
@@ -14,7 +15,7 @@
                 try {
                     const response = await fetch(datei);
                     const data = await response.json();
-                    
+
                     // Zeigt den Inhalt der Datei einfach als Text im Browser an
                     output.innerHTML += `<pre>${datei}: ${JSON.stringify(data, null, 2)}</pre>`;
                 } catch (e) {
@@ -26,4 +27,5 @@
         testLaden();
     </script>
 </body>
+
 </html>
