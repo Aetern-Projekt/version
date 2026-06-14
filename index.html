@@ -35,40 +35,40 @@
 </head>
 <body>
 
-    <h1>Downloads - Vorschau</h1>
-    <div id="container"></div>
+    <h1>Downloads</h1>
+    <div id="container">Daten werden geladen...</div>
 
     <script>
-      async function testLaden() {
-    const container = document.getElementById('container');
-    container.innerHTML = ""; 
+        const dateien = ['android.json', 'ios.json', 'windows.json', 'macosx.json', 'linux.json'];
 
-    for (const datei of dateien) {
-        const card = document.createElement('div');
-        card.className = 'download-card';
-        card.innerHTML = `<div class="file-name">Lade...</div><div>Wird geladen...</div>`;
-        container.appendChild(card);
+        async function testLaden() {
+            const container = document.getElementById('container');
+            container.innerHTML = ""; 
 
-        try {
-            const response = await fetch(datei);
-            if (!response.ok) throw new Error("Nicht gefunden");
-            const data = await response.json();
+            for (const datei of dateien) {
+                const card = document.createElement('div');
+                card.className = 'download-card';
+                card.innerHTML = `<div class="file-name">${datei}</div><div>Lädt...</div>`;
+                container.appendChild(card);
 
-            // Hier wird der Name direkt aus dem JSON ausgelesen
-            // Falls das Feld anders heißt, einfach 'data.name' anpassen
-            const titel = data.name || "Unbekannt";
-            const version = data.version || "N/A";
+                try {
+                    const response = await fetch(datei);
+                    if (!response.ok) throw new Error("Datei nicht gefunden");
+                    const data = await response.json();
 
-            card.innerHTML = `
-                <div class="file-name">${titel}</div>
-                <p style="font-size: 0.8em; color: #666;">Version: ${version}</p>
-                <a href="${datei}" class="btn" download>Download</a>
-            `;
-        } catch (e) {
-            card.innerHTML = `<div class="file-name">Fehler</div><p class="error">Konnte ${datei} nicht laden</p>`;
+                    // Inhalt der Karte aktualisieren
+                    card.innerHTML = `
+                        <div class="file-name">${datei.toUpperCase()}</div>
+                        <p style="font-size: 0.8em; color: #666;">Größe: ${JSON.stringify(data).length} Bytes</p>
+                        <a href="#" class="btn" onclick="alert('Download gestartet für ${datei}')">Download</a>
+                    `;
+                } catch (e) {
+                    card.innerHTML = `<div class="file-name">${datei}</div><p class="error">Fehler beim Laden</p>`;
+                }
+            }
         }
-    }
-}
+
+        testLaden();
     </script>
 </body>
 </html>
