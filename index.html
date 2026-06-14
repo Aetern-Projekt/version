@@ -30,6 +30,17 @@
             font-weight: bold;
             margin-bottom: 10px;
             color: #333;
+            font-size: 1.1em;
+        }
+
+        .info {
+            font-size: 0.9em;
+            text-align: left;
+            margin-bottom: 10px;
+        }
+
+        .info p {
+            margin: 5px 0;
         }
 
         .btn {
@@ -59,11 +70,12 @@
 
 <script>
 
-// JSON-Dateien definieren
 const dateien = [
     "android.json",
     "windows.json",
-    "linux.json"
+    "linux.json",
+    "ios.json",
+    "macosx.json"
 ];
 
 async function testLaden() {
@@ -85,20 +97,36 @@ async function testLaden() {
 
             const data = await response.json();
 
-            card.innerHTML = `
-                <div class="file-name">${data.Plattform ?? "Unbekannt"}</div>
+            const channel =
+                data.Channel && data.Channel !== "---"
+                    ? `<p><strong>Channel:</strong> ${data.Channel}</p>`
+                    : "";
 
-                <div style="font-size:0.9em; text-align:left;">
-                    <p><strong>Channel:</strong> ${data.Channel ?? "-"}</p>
-                    <p><strong>Version:</strong> ${data.Version ?? "-"}</p>
-                    <p><strong>Datum:</strong> ${data.Datum ?? "-"}</p>
+            const version =
+                data.Version && data.Version !== "---"
+                    ? `<p><strong>Version:</strong> ${data.Version}</p>`
+                    : "";
+
+            const datum =
+                data.Datum && data.Datum !== "---"
+                    ? `<p><strong>Datum:</strong> ${data.Datum}</p>`
+                    : "";
+
+            const infos = channel + version + datum;
+
+            const downloadButton =
+                data.URL && data.URL !== "---"
+                    ? `<a href="${data.URL}" class="btn" target="_blank">Download</a>`
+                    : "";
+
+            card.innerHTML = `
+                <div class="file-name">
+                    ${data.Plattform || "Unbekannt"}
                 </div>
 
-                <a href="${data.URL ?? '#'}"
-                   class="btn"
-                   target="_blank">
-                   Download
-                </a>
+                ${infos ? `<div class="info">${infos}</div>` : ""}
+
+                ${downloadButton}
             `;
         }
         catch (error) {
@@ -114,7 +142,6 @@ async function testLaden() {
     }
 }
 
-// Nach dem Laden der Seite ausführen
 window.addEventListener("DOMContentLoaded", testLaden);
 
 </script>
