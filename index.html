@@ -1,31 +1,74 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: sans-serif; background-color: #f4f7f6; padding: 20px; }
+        #container { display: flex; flex-wrap: wrap; gap: 20px; }
+        
+        .download-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            width: 250px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .file-name { font-weight: bold; margin-bottom: 10px; color: #333; }
+        
+        .btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .btn:hover { background-color: #0056b3; }
+        .error { color: red; font-size: 0.9em; }
+    </style>
+</head>
 <body>
-    <div id="test">Daten werden geladen...</div>
+
+    <h1>Downloads - Vorschau</h1>
+    <div id="container"></div>
 
     <script>
-        const dateien = ['android.json', 'ios.json', 'windows.json','macosx.json','linux.json'];
+      async function testLaden() {
+    const container = document.getElementById('container');
+    container.innerHTML = ""; 
 
-        async function testLaden() {
-            const output = document.getElementById('test');
-            output.innerHTML = ""; // Container leeren
+    for (const datei of dateien) {
+        const card = document.createElement('div');
+        card.className = 'download-card';
+        card.innerHTML = `<div class="file-name">Lade...</div><div>Wird geladen...</div>`;
+        container.appendChild(card);
 
-            for (const datei of dateien) {
-                try {
-                    const response = await fetch(datei);
-                    const data = await response.json();
+        try {
+            const response = await fetch(datei);
+            if (!response.ok) throw new Error("Nicht gefunden");
+            const data = await response.json();
 
-                    // Zeigt den Inhalt der Datei einfach als Text im Browser an
-                    output.innerHTML += `<pre>${datei}: ${JSON.stringify(data, null, 2)}</pre>`;
-                } catch (e) {
-                    output.innerHTML += `<p>Fehler bei ${datei}: ${e.message}</p>`;
-                }
-            }
+            // Hier wird der Name direkt aus dem JSON ausgelesen
+            // Falls das Feld anders heißt, einfach 'data.name' anpassen
+            const titel = data.name || "Unbekannt";
+            const version = data.version || "N/A";
+
+            card.innerHTML = `
+                <div class="file-name">${titel}</div>
+                <p style="font-size: 0.8em; color: #666;">Version: ${version}</p>
+                <a href="${datei}" class="btn" download>Download</a>
+            `;
+        } catch (e) {
+            card.innerHTML = `<div class="file-name">Fehler</div><p class="error">Konnte ${datei} nicht laden</p>`;
         }
-
-        testLaden();
+    }
+}
     </script>
 </body>
-
 </html>
