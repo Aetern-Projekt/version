@@ -1,7 +1,7 @@
 {
-  "version": "0.0.1-a",
+  "version": "0.0.1-b",
   "downloads": {
-    "windows": "https://aetern.de/downloads/windows/Aetern Setup 0.0.1-a.exe",
+    "windows": "https://aetern.de/downloads/windows/Aetern Setup 0.0.1-b.exe",
     "_macos": "https://macos.venyor.de/Venyor-0.0.5-a.dmg",
     "_linux_disabled": "Derzeit kein Linux Build verfügbar"
   }
